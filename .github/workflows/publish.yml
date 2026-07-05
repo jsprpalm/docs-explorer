@@ -1,0 +1,32 @@
+name: Publish
+
+# Publishes to the VS Code Marketplace when you push a version tag, e.g.:
+#   npm version 0.1.1 && git push --follow-tags
+#
+# Requires a repository secret VSCE_PAT — an Azure DevOps Personal Access Token
+# for the "jsprpalm" publisher (Marketplace > Manage Publishers > PAT).
+# Optionally set OVSX_PAT to also publish to Open VSX (open-vsx.org).
+
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      OVSX_PAT: ${{ secrets.OVSX_PAT }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Publish to VS Code Marketplace
+        run: npx @vscode/vsce publish -p "$VSCE_PAT"
+      - name: Publish to Open VSX
+        if: ${{ env.OVSX_PAT != '' }}
+        run: npx ovsx publish -p "$OVSX_PAT"

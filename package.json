@@ -5,6 +5,18 @@
   "version": "0.1.0",
   "publisher": "jsprpalm",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jsprpalm/docs-explorer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jsprpalm/docs-explorer/issues"
+  },
+  "homepage": "https://github.com/jsprpalm/docs-explorer#readme",
+  "galleryBanner": {
+    "color": "#22272e",
+    "theme": "dark"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },
@@ -330,7 +342,8 @@
     "vscode:prepublish": "node esbuild.mjs --production",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src test",
-    "test": "vitest run"
+    "test": "vitest run",
+    "package": "vsce package"
   },
   "dependencies": {
     "ignore": "^5.3.1",

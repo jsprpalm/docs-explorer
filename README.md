@@ -6,7 +6,17 @@ central as the code (e.g. developing with Claude Code), where markdown files
 grow fast, become governing artifacts, and get lost among code files in the
 normal Explorer.
 
-## Features (Phase 1 – MVP)
+## Install
+
+- **VS Code Marketplace:** search for **Docs Explorer** (once published).
+- **From source:** clone, `npm install`, then press <kbd>F5</kbd> — or run
+  `npm run package` to build a `.vsix` and install it via
+  *Extensions: Install from VSIX…*.
+
+**Requirements:** VS Code `^1.90`. Git is optional — only *Show History (Git)*
+needs a git repository; every other feature works without it.
+
+## Features
 
 - **Filtered tree** – shows only branches that contain markdown. Empty branches
   never appear. Single-child directory chains compact to `a/b/c` nodes.
@@ -55,12 +65,13 @@ normal Explorer.
 npm install
 npm run build       # bundle with esbuild -> dist/extension.js
 npm run typecheck   # tsc --noEmit
-npm test            # vitest (pure tree/pinned logic)
+npm run lint        # eslint
+npm test            # vitest (pure tree, pinned, grouping & git-log logic)
 ```
 
 Press <kbd>F5</kbd> in VS Code to launch an Extension Development Host with the
-extension loaded.
+extension loaded. See [CONTRIBUTING.md](CONTRIBUTING.md) for more.
 
 ## License
 
-MIT
+[MIT](LICENSE) © Jesper Palm

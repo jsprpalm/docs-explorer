@@ -1,4 +1,5 @@
 .vscode/**
+.claude/**
 src/**
 test/**
 node_modules/**
@@ -10,4 +11,6 @@ vitest.config.ts
 eslint.config.mjs
 .gitignore
 .github/**
+CONTRIBUTING.md
 docs-explorer-spec.md
+*.vsix
