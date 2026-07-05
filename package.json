@@ -23,6 +23,7 @@
     "onView:docsExplorerExplorer"
   ],
   "main": "./dist/extension.js",
+  "icon": "resources/icon.png",
   "contributes": {
     "viewsContainers": {
       "activitybar": [
