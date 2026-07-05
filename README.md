@@ -28,6 +28,10 @@ normal Explorer.
 - **Refresh** and **collapse-all** in the toolbar.
 - **Context menu** – open in editor, open preview full-screen, reveal in
   Explorer, copy relative path.
+- **History** – "Show Timeline" opens VS Code's built-in Timeline for the file;
+  "Show History (Git)" lists the commits that touched it (`git log --follow`)
+  and diffs the picked revision against your working copy. The Git item is
+  hidden when the workspace isn't a git repo.
 
 ## Settings
 

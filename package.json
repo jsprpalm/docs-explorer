@@ -93,6 +93,16 @@
         "command": "docsExplorer.copyRelativePath",
         "title": "Copy Relative Path",
         "category": "Docs Explorer"
+      },
+      {
+        "command": "docsExplorer.showTimeline",
+        "title": "Show Timeline",
+        "category": "Docs Explorer"
+      },
+      {
+        "command": "docsExplorer.showHistory",
+        "title": "Show History (Git)",
+        "category": "Docs Explorer"
       }
     ],
     "menus": {
@@ -111,6 +121,14 @@
         },
         {
           "command": "docsExplorer.copyRelativePath",
+          "when": "false"
+        },
+        {
+          "command": "docsExplorer.showTimeline",
+          "when": "false"
+        },
+        {
+          "command": "docsExplorer.showHistory",
           "when": "false"
         }
       ],
@@ -156,6 +174,16 @@
           "command": "docsExplorer.copyRelativePath",
           "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && viewItem == file",
           "group": "2_reveal@2"
+        },
+        {
+          "command": "docsExplorer.showTimeline",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && viewItem == file",
+          "group": "3_history@1"
+        },
+        {
+          "command": "docsExplorer.showHistory",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && viewItem == file && docsExplorer.gitAvailable",
+          "group": "3_history@2"
         }
       ]
     },

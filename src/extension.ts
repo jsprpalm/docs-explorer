@@ -4,6 +4,8 @@ import { DocsTreeProvider, ViewMode } from './docsTreeProvider';
 import { indexWorkspace } from './fileIndexer';
 import { createWatcher } from './watcher';
 import { registerCommands } from './commands';
+import { registerHistory } from './history';
+import { isInsideWorkTree } from './git';
 
 const MODE_STATE_KEY = 'docsExplorer.mode';
 
@@ -32,6 +34,21 @@ export function activate(context: vscode.ExtensionContext): void {
   };
 
   registerCommands(context, { getConfig, reindex, setMode });
+  registerHistory(context);
+
+  // Gate the "Show history" menu item on git being available in a workspace folder.
+  const updateGitContext = async (): Promise<void> => {
+    const folders = vscode.workspace.workspaceFolders ?? [];
+    let available = false;
+    for (const folder of folders) {
+      if (await isInsideWorkTree(folder.uri.fsPath)) {
+        available = true;
+        break;
+      }
+    }
+    await vscode.commands.executeCommand('setContext', 'docsExplorer.gitAvailable', available);
+  };
+  void updateGitContext();
 
   // The view lives in either the Activity Bar or the Explorer, toggled by the
   // `viewLocation` setting via `when` clauses. Register the provider on both ids;
@@ -66,7 +83,10 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       void reindex();
     }),
-    vscode.workspace.onDidChangeWorkspaceFolders(() => void reindex()),
+    vscode.workspace.onDidChangeWorkspaceFolders(() => {
+      void reindex();
+      void updateGitContext();
+    }),
   );
 
   void reindex();
