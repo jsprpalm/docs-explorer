@@ -1,3 +1,4 @@
+import * as fs from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import ignore from 'ignore';
@@ -27,10 +28,13 @@ async function indexFolder(
   const excludeGlob = buildExcludeGlob(config);
   const uris = await vscode.workspace.findFiles(include, excludeGlob);
 
-  let entries: FileEntry[] = uris.map((uri) => ({
-    fsPath: uri.fsPath,
-    relativePath: toPosixRelative(folder, uri),
-  }));
+  let entries: FileEntry[] = await Promise.all(
+    uris.map(async (uri) => ({
+      fsPath: uri.fsPath,
+      relativePath: toPosixRelative(folder, uri),
+      mtime: await statMtime(uri.fsPath),
+    })),
+  );
 
   if (config.respectGitignore) {
     entries = await applyGitignore(folder, entries);
@@ -82,4 +86,12 @@ async function applyGitignore(
 function toPosixRelative(folder: vscode.WorkspaceFolder, uri: vscode.Uri): string {
   const rel = path.relative(folder.uri.fsPath, uri.fsPath);
   return rel.split(path.sep).join('/');
+}
+
+async function statMtime(fsPath: string): Promise<number> {
+  try {
+    return (await fs.promises.stat(fsPath)).mtimeMs;
+  } catch {
+    return 0;
+  }
 }

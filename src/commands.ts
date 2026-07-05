@@ -65,5 +65,6 @@ export function registerCommands(context: vscode.ExtensionContext, deps: Command
     vscode.commands.registerCommand('docsExplorer.refresh', () => deps.reindex()),
     vscode.commands.registerCommand('docsExplorer.viewAsFlat', () => deps.setMode('flat')),
     vscode.commands.registerCommand('docsExplorer.viewAsTree', () => deps.setMode('tree')),
+    vscode.commands.registerCommand('docsExplorer.viewAsGrouped', () => deps.setMode('grouped')),
   );
 }

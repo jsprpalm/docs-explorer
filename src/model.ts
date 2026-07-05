@@ -6,7 +6,16 @@ export interface FileEntry {
   fsPath: string;
   /** POSIX-style path relative to its workspace folder. */
   relativePath: string;
+  /** Last-modified time in ms; used for "recently changed" sorting. */
+  mtime?: number;
 }
+
+export interface GroupDef {
+  name: string;
+  patterns: string[];
+}
+
+export type GroupSortBy = 'modified' | 'name';
 
 export interface SectionNode {
   kind: 'section';
@@ -35,7 +44,28 @@ export interface FileNode {
   description?: string;
 }
 
-export type DocNode = SectionNode | FolderNode | FileNode;
+export interface GroupNode {
+  kind: 'group';
+  id: string;
+  label: string;
+  count: number;
+  children: FileNode[];
+}
+
+export type DocNode = SectionNode | FolderNode | FileNode | GroupNode;
+
+/** Build a FileNode. The id uses the absolute path so it is unique across
+ * workspace folders and view modes (grouped/flat combine folders). */
+export function makeFileNode(file: FileEntry, idPrefix: string, description?: string): FileNode {
+  return {
+    kind: 'file',
+    id: `${idPrefix}file:${file.fsPath}`,
+    label: baseName(file.relativePath),
+    fsPath: file.fsPath,
+    relativePath: file.relativePath,
+    description,
+  };
+}
 
 /** Case-insensitive comparison used for stable, human-friendly sorting. */
 export function compareLabels(a: string, b: string): number {

@@ -4,9 +4,9 @@ import {
   FileEntry,
   FileNode,
   FolderNode,
-  baseName,
   compareLabels,
   dirName,
+  makeFileNode,
 } from './model';
 
 interface MutableFolder {
@@ -97,12 +97,5 @@ function convertFolder(folder: MutableFolder, compact: boolean, idPrefix: string
 }
 
 function toFileNode(file: FileEntry, idPrefix: string, description?: string): FileNode {
-  return {
-    kind: 'file',
-    id: `${idPrefix}file:${file.relativePath}`,
-    label: baseName(file.relativePath),
-    fsPath: file.fsPath,
-    relativePath: file.relativePath,
-    description,
-  };
+  return makeFileNode(file, idPrefix, description);
 }

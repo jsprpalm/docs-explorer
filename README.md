@@ -18,7 +18,12 @@ normal Explorer.
 - **Live updates** – a debounced file watcher keeps the tree in sync as files
   are created, renamed, or deleted (great when an agent is writing files).
 - **Multi-root** – one top node per workspace folder.
-- **Tree ↔ flat list** toggle, refresh, and collapse-all in the toolbar.
+- **Three view modes** – toolbar toggle between **Tree**, **Flat list**, and
+  **Grouped**. Grouped bundles files into convention-based groups (Agent
+  instructions, Specs & plans, Docs, ADRs & decisions, Changelogs & meta, and
+  Other) with a per-group count, sorted by last-modified (default) or name.
+  Groups and their globs are fully configurable.
+- **Refresh** and **collapse-all** in the toolbar.
 - **Context menu** – open in editor, open preview full-screen, reveal in
   Explorer, copy relative path.
 
@@ -34,6 +39,8 @@ normal Explorer.
 | `docsExplorer.compactFolders` | `true` | Compress single-child directory chains. |
 | `docsExplorer.viewLocation` | `activityBar` | `activityBar` \| `explorer`. |
 | `docsExplorer.openInNewTab` | `false` | Open each file in a new tab instead of reusing one preview tab. |
+| `docsExplorer.groups` | 5 built-in groups | Convention-based groups for the Grouped view; each file joins the first group whose globs match. |
+| `docsExplorer.groupSortBy` | `modified` | Sort within a group: `modified` (newest first) or `name`. |
 
 ## Development
 

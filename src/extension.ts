@@ -10,7 +10,7 @@ const MODE_STATE_KEY = 'docsExplorer.mode';
 export function activate(context: vscode.ExtensionContext): void {
   let mode: ViewMode = context.workspaceState.get<ViewMode>(MODE_STATE_KEY, 'tree');
   const syncModeContext = () =>
-    vscode.commands.executeCommand('setContext', 'docsExplorer.flat', mode === 'flat');
+    vscode.commands.executeCommand('setContext', 'docsExplorer.viewMode', mode);
   syncModeContext();
 
   const provider = new DocsTreeProvider(getConfig, () => mode);

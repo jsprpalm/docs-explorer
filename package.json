@@ -69,6 +69,12 @@
         "icon": "$(list-tree)"
       },
       {
+        "command": "docsExplorer.viewAsGrouped",
+        "title": "Show as Grouped List",
+        "category": "Docs Explorer",
+        "icon": "$(group-by-ref-type)"
+      },
+      {
         "command": "docsExplorer.openInEditor",
         "title": "Open in Editor",
         "category": "Docs Explorer"
@@ -110,19 +116,24 @@
       ],
       "view/title": [
         {
-          "command": "docsExplorer.viewAsFlat",
-          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && !docsExplorer.flat",
+          "command": "docsExplorer.viewAsTree",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && docsExplorer.viewMode != tree",
           "group": "navigation@1"
         },
         {
-          "command": "docsExplorer.viewAsTree",
-          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && docsExplorer.flat",
-          "group": "navigation@1"
+          "command": "docsExplorer.viewAsFlat",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && docsExplorer.viewMode != flat",
+          "group": "navigation@2"
+        },
+        {
+          "command": "docsExplorer.viewAsGrouped",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && docsExplorer.viewMode != grouped",
+          "group": "navigation@3"
         },
         {
           "command": "docsExplorer.refresh",
           "when": "view == docsExplorerActivity || view == docsExplorerExplorer",
-          "group": "navigation@2"
+          "group": "navigation@9"
         }
       ],
       "view/item/context": [
@@ -216,6 +227,64 @@
           "type": "boolean",
           "default": false,
           "markdownDescription": "Open each file in a new tab instead of reusing the same preview tab."
+        },
+        "docsExplorer.groups": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "patterns"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Group heading."
+              },
+              "patterns": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Globs matched against the workspace-relative path."
+              }
+            }
+          },
+          "default": [
+            {
+              "name": "Agent instructions",
+              "patterns": ["**/CLAUDE.md", ".claude/**", "**/AGENTS.md", ".cursor/rules/**"]
+            },
+            {
+              "name": "Specs & plans",
+              "patterns": ["**/*.spec.md", "**/*.plan.md", "docs/specs/**", "plans/**"]
+            },
+            {
+              "name": "Docs",
+              "patterns": ["docs/**", "documentation/**"]
+            },
+            {
+              "name": "ADRs & decisions",
+              "patterns": ["**/adr/**", "**/decisions/**", "**/*.adr.md"]
+            },
+            {
+              "name": "Changelogs & meta",
+              "patterns": [
+                "**/CHANGELOG.md",
+                "**/CONTRIBUTING.md",
+                "**/LICENSE.md",
+                "**/CODE_OF_CONDUCT.md"
+              ]
+            }
+          ],
+          "markdownDescription": "Groups used by the **Grouped** view mode. Each file is placed in the first group whose patterns match (priority order); unmatched files fall into an implicit \"Other\" group."
+        },
+        "docsExplorer.groupSortBy": {
+          "type": "string",
+          "enum": ["modified", "name"],
+          "default": "modified",
+          "markdownEnumDescriptions": [
+            "Most-recently-modified first — useful right after an agent has written files.",
+            "Alphabetical by file name."
+          ],
+          "markdownDescription": "How files are sorted within each group in the Grouped view."
         }
       }
     }

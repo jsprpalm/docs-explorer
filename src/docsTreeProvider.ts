@@ -2,10 +2,11 @@ import * as vscode from 'vscode';
 import { DocNode, FileNode, baseName, dirName } from './model';
 import { WorkspaceIndex } from './fileIndexer';
 import { buildTree, buildFlatList } from './treeBuilder';
+import { groupFiles } from './grouping';
 import { matchPinned } from './pinned';
 import { DocsConfig } from './config';
 
-export type ViewMode = 'tree' | 'flat';
+export type ViewMode = 'tree' | 'flat' | 'grouped';
 
 export class DocsTreeProvider implements vscode.TreeDataProvider<DocNode> {
   private readonly _onDidChangeTreeData = new vscode.EventEmitter<DocNode | undefined | void>();
@@ -35,7 +36,6 @@ export class DocsTreeProvider implements vscode.TreeDataProvider<DocNode> {
   private rebuild(): void {
     const cfg = this.getConfig();
     const mode = this.getMode();
-    const multiRoot = this.index.length > 1;
     const topLevel: DocNode[] = [];
 
     const pinnedSection = this.buildPinnedSection(cfg);
@@ -43,6 +43,15 @@ export class DocsTreeProvider implements vscode.TreeDataProvider<DocNode> {
       topLevel.push(pinnedSection);
     }
 
+    // Grouped mode is a single flat, grouped list across all workspace folders.
+    if (mode === 'grouped') {
+      const allFiles = this.index.flatMap((wi) => wi.files);
+      topLevel.push(...groupFiles(allFiles, cfg.groups, cfg.groupSortBy, 'g:'));
+      this.roots = topLevel;
+      return;
+    }
+
+    const multiRoot = this.index.length > 1;
     this.index.forEach((wi, i) => {
       const idPrefix = `w${i}:`;
       const children =
@@ -113,6 +122,14 @@ export class DocsTreeProvider implements vscode.TreeDataProvider<DocNode> {
       item.id = node.id;
       item.contextValue = 'section';
       item.iconPath = new vscode.ThemeIcon('pinned');
+      return item;
+    }
+
+    if (node.kind === 'group') {
+      const item = new vscode.TreeItem(node.label, vscode.TreeItemCollapsibleState.Expanded);
+      item.id = node.id;
+      item.description = String(node.count);
+      item.contextValue = 'group';
       return item;
     }
 
