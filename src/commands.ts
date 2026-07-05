@@ -5,6 +5,13 @@ import { ViewMode } from './docsTreeProvider';
 
 const MARKDOWN_EXTENSIONS = new Set(['.md', '.mdx', '.markdown']);
 
+// Built-in custom editor that renders the markdown preview inside a normal
+// editor slot (the one `workbench.editorAssociations` targets). Because it is
+// an editor — not a standalone webview panel — it participates in VS Code's
+// transient/"preview tab" system, so opening it with `preview: true` reuses and
+// replaces the tab on the next click instead of spawning a new panel.
+const MARKDOWN_PREVIEW_EDITOR = 'vscode.markdown.preview.editor';
+
 function isMarkdown(fsPath: string): boolean {
   const dot = fsPath.lastIndexOf('.');
   return dot >= 0 && MARKDOWN_EXTENSIONS.has(fsPath.slice(dot).toLowerCase());
@@ -20,18 +27,23 @@ export function registerCommands(context: vscode.ExtensionContext, deps: Command
   const openFile = async (node: FileNode): Promise<void> => {
     const uri = vscode.Uri.file(node.fsPath);
     const cfg = deps.getConfig();
+    // `preview: true` opens a transient (italic) tab that the next click
+    // replaces — the same behaviour as single-clicking in the normal Explorer.
+    const reuse = !cfg.openInNewTab;
 
     // Non-markdown files (e.g. when `include` is extended to .txt) have no
-    // preview, so always open them in the editor.
+    // rendered preview, so open them in a normal editor.
     if (!isMarkdown(node.fsPath) || cfg.defaultOpenMode === 'edit') {
-      await vscode.commands.executeCommand('vscode.open', uri, { preview: !cfg.openInNewTab });
+      await vscode.commands.executeCommand('vscode.open', uri, { preview: reuse });
       return;
     }
-    if (cfg.defaultOpenMode === 'preview') {
-      await vscode.commands.executeCommand('markdown.showPreview', uri);
-    } else {
-      await vscode.commands.executeCommand('markdown.showPreviewToSide', uri);
-    }
+
+    const options: vscode.TextDocumentShowOptions =
+      cfg.defaultOpenMode === 'preview'
+        ? { preview: reuse }
+        : { viewColumn: vscode.ViewColumn.Beside, preview: reuse, preserveFocus: true };
+
+    await vscode.commands.executeCommand('vscode.openWith', uri, MARKDOWN_PREVIEW_EDITOR, options);
   };
 
   context.subscriptions.push(
