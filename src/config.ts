@@ -26,7 +26,7 @@ export function getConfig(): DocsConfig {
       'AGENTS.md',
       '.claude/**',
     ]),
-    defaultOpenMode: c.get<OpenMode>('defaultOpenMode', 'previewToSide'),
+    defaultOpenMode: c.get<OpenMode>('defaultOpenMode', 'preview'),
     compactFolders: c.get<boolean>('compactFolders', true),
     viewLocation: c.get<ViewLocation>('viewLocation', 'activityBar'),
     openInNewTab: c.get<boolean>('openInNewTab', false),

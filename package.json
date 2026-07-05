@@ -182,15 +182,15 @@
         "docsExplorer.defaultOpenMode": {
           "type": "string",
           "enum": [
-            "previewToSide",
             "preview",
+            "previewToSide",
             "edit"
           ],
-          "default": "previewToSide",
+          "default": "preview",
           "markdownEnumDescriptions": [
-            "Open markdown preview beside the tree.",
-            "Open markdown preview taking the full editor.",
-            "Open the file in a normal editor (edit mode)."
+            "Open the rendered markdown preview in the active editor group — reuses the current tab like the Explorer does, never opening a new panel.",
+            "Open the rendered markdown preview in a group beside the current one (split view).",
+            "Open the file's source in a normal editor (edit mode)."
           ],
           "markdownDescription": "How a file opens on single-click."
         },

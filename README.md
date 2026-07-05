@@ -10,8 +10,9 @@ normal Explorer.
 
 - **Filtered tree** – shows only branches that contain markdown. Empty branches
   never appear. Single-child directory chains compact to `a/b/c` nodes.
-- **Preview by default** – single-click opens the built-in markdown preview to
-  the side; the tree and your active editor stay put.
+- **Preview by default** – single-click opens the rendered markdown preview in
+  the active editor group, reusing the current tab like the Explorer does (never
+  spawning a new panel). Switch to `previewToSide` for a split view.
 - **Pinned section** – `CLAUDE.md` (anywhere), root `README.md`, `AGENTS.md`,
   and everything under `.claude/` stay pinned at the top. Configurable.
 - **Live updates** – a debounced file watcher keeps the tree in sync as files
@@ -29,7 +30,7 @@ normal Explorer.
 | `docsExplorer.exclude` | `**/node_modules/**` | Extra exclude glob. |
 | `docsExplorer.respectGitignore` | `true` | Filter out git-ignored files via the root `.gitignore`. |
 | `docsExplorer.pinnedPatterns` | `["**/CLAUDE.md", "README.md", "AGENTS.md", ".claude/**"]` | Files pinned to the top. |
-| `docsExplorer.defaultOpenMode` | `previewToSide` | `previewToSide` \| `preview` \| `edit`. |
+| `docsExplorer.defaultOpenMode` | `preview` | `preview` (active group, like the Explorer) \| `previewToSide` (split view) \| `edit` (source). |
 | `docsExplorer.compactFolders` | `true` | Compress single-child directory chains. |
 | `docsExplorer.viewLocation` | `activityBar` | `activityBar` \| `explorer`. |
 | `docsExplorer.openInNewTab` | `false` | Open each file in a new tab instead of reusing one preview tab. |
