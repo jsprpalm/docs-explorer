@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { groupFiles, OTHER_GROUP } from '../src/grouping';
+import { groupFiles, recentlyChangedGroup, OTHER_GROUP } from '../src/grouping';
 import { FileEntry, GroupDef } from '../src/model';
 
 const entry = (relativePath: string, mtime = 0): FileEntry => ({
@@ -61,5 +61,38 @@ describe('groupFiles', () => {
   it('sets the containing directory as each file description', () => {
     const groups = groupFiles([entry('docs/sub/a.md')], GROUPS, 'name');
     expect(groups[0].children[0].description).toBe('docs/sub');
+  });
+});
+
+describe('recentlyChangedGroup', () => {
+  const now = 1_000_000_000_000;
+  const min = 60_000;
+
+  it('includes only files modified within the window, newest first', () => {
+    const group = recentlyChangedGroup(
+      [
+        entry('a.md', now - 1000), // 1s ago
+        entry('b.md', now - 10 * min), // 10 min ago (outside)
+        entry('c.md', now - 1 * min), // 1 min ago
+      ],
+      5 * min,
+      now,
+    );
+    expect(group?.label).toBe('Recently changed');
+    expect(group?.children.map((c) => c.label)).toEqual(['a.md', 'c.md']);
+    expect(group?.count).toBe(2);
+  });
+
+  it('excludes files with unknown (0) mtime', () => {
+    const group = recentlyChangedGroup([entry('a.md', 0), entry('b.md', now)], 5 * min, now);
+    expect(group?.children.map((c) => c.label)).toEqual(['b.md']);
+  });
+
+  it('returns undefined when disabled (window <= 0)', () => {
+    expect(recentlyChangedGroup([entry('a.md', now)], 0, now)).toBeUndefined();
+  });
+
+  it('returns undefined when nothing is recent', () => {
+    expect(recentlyChangedGroup([entry('a.md', now - 60 * min)], 5 * min, now)).toBeUndefined();
   });
 });

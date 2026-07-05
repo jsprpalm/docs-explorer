@@ -285,6 +285,12 @@
             "Alphabetical by file name."
           ],
           "markdownDescription": "How files are sorted within each group in the Grouped view."
+        },
+        "docsExplorer.recentlyChangedMinutes": {
+          "type": "number",
+          "default": 5,
+          "minimum": 0,
+          "markdownDescription": "In the Grouped view, show a **Recently changed** group at the top with files modified within this many minutes — handy for spotting what an agent just wrote. Set to `0` to disable."
         }
       }
     }

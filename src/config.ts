@@ -34,6 +34,7 @@ export interface DocsConfig {
   openInNewTab: boolean;
   groups: GroupDef[];
   groupSortBy: GroupSortBy;
+  recentlyChangedMinutes: number;
 }
 
 export function getConfig(): DocsConfig {
@@ -54,5 +55,6 @@ export function getConfig(): DocsConfig {
     openInNewTab: c.get<boolean>('openInNewTab', false),
     groups: c.get<GroupDef[]>('groups', DEFAULT_GROUPS),
     groupSortBy: c.get<GroupSortBy>('groupSortBy', 'modified'),
+    recentlyChangedMinutes: c.get<number>('recentlyChangedMinutes', 5),
   };
 }

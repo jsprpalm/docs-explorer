@@ -14,6 +14,43 @@ import {
 /** Files that match no configured group land here, appended last. */
 export const OTHER_GROUP = 'Other';
 
+/** Heading for the recently-changed shortcut group. */
+export const RECENTLY_CHANGED_GROUP = 'Recently changed';
+
+/**
+ * Build the "Recently changed" group: files modified within the last `withinMs`
+ * (relative to `now`), newest first. Additive — these files still appear in
+ * their normal group. Returns undefined when disabled or empty. `now` and the
+ * window are passed in so this stays pure and deterministic.
+ */
+export function recentlyChangedGroup(
+  files: FileEntry[],
+  withinMs: number,
+  now: number,
+  idPrefix = '',
+  label = RECENTLY_CHANGED_GROUP,
+): GroupNode | undefined {
+  if (withinMs <= 0) {
+    return undefined;
+  }
+  const threshold = now - withinMs;
+  const recent = files
+    .filter((f) => (f.mtime ?? 0) > 0 && (f.mtime ?? 0) >= threshold)
+    .sort(
+      (a, b) => (b.mtime ?? 0) - (a.mtime ?? 0) || compareLabels(a.relativePath, b.relativePath),
+    );
+  if (recent.length === 0) {
+    return undefined;
+  }
+  return {
+    kind: 'group',
+    id: `${idPrefix}group:recent`,
+    label,
+    count: recent.length,
+    children: recent.map((f) => makeFileNode(f, idPrefix, dirName(f.relativePath) || undefined)),
+  };
+}
+
 /**
  * Assign each file to the FIRST group whose patterns match (priority order),
  * falling back to an "Other" bucket. Empty groups are omitted. Within a group,

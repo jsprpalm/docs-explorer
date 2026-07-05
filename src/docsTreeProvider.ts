@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { DocNode, FileNode, baseName, dirName } from './model';
 import { WorkspaceIndex } from './fileIndexer';
 import { buildTree, buildFlatList } from './treeBuilder';
-import { groupFiles } from './grouping';
+import { groupFiles, recentlyChangedGroup } from './grouping';
 import { matchPinned } from './pinned';
 import { DocsConfig } from './config';
 
@@ -46,6 +46,17 @@ export class DocsTreeProvider implements vscode.TreeDataProvider<DocNode> {
     // Grouped mode is a single flat, grouped list across all workspace folders.
     if (mode === 'grouped') {
       const allFiles = this.index.flatMap((wi) => wi.files);
+      // "Recently changed" sits above the convention groups (distinct id prefix
+      // so the same file's node id doesn't collide with its convention group).
+      const recent = recentlyChangedGroup(
+        allFiles,
+        cfg.recentlyChangedMinutes * 60_000,
+        Date.now(),
+        'gr:',
+      );
+      if (recent) {
+        topLevel.push(recent);
+      }
       topLevel.push(...groupFiles(allFiles, cfg.groups, cfg.groupSortBy, 'g:'));
       this.roots = topLevel;
       return;

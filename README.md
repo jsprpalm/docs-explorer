@@ -22,7 +22,9 @@ normal Explorer.
   **Grouped**. Grouped bundles files into convention-based groups (Agent
   instructions, Specs & plans, Docs, ADRs & decisions, Changelogs & meta, and
   Other) with a per-group count, sorted by last-modified (default) or name.
-  Groups and their globs are fully configurable.
+  Groups and their globs are fully configurable. A **Recently changed** group
+  sits at the top showing files touched in the last few minutes — so you can
+  immediately see what an agent just produced.
 - **Refresh** and **collapse-all** in the toolbar.
 - **Context menu** – open in editor, open preview full-screen, reveal in
   Explorer, copy relative path.
@@ -41,6 +43,7 @@ normal Explorer.
 | `docsExplorer.openInNewTab` | `false` | Open each file in a new tab instead of reusing one preview tab. |
 | `docsExplorer.groups` | 5 built-in groups | Convention-based groups for the Grouped view; each file joins the first group whose globs match. |
 | `docsExplorer.groupSortBy` | `modified` | Sort within a group: `modified` (newest first) or `name`. |
+| `docsExplorer.recentlyChangedMinutes` | `5` | Grouped view: show a "Recently changed" group for files modified within this many minutes (`0` disables). |
 
 ## Development
 
