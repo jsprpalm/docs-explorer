@@ -139,7 +139,6 @@ export class DocsTreeProvider implements vscode.TreeDataProvider<DocNode> {
     if (node.kind === 'group') {
       const item = new vscode.TreeItem(node.label, vscode.TreeItemCollapsibleState.Expanded);
       item.id = node.id;
-      item.description = String(node.count);
       item.contextValue = 'group';
       return item;
     }
