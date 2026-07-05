@@ -1,0 +1,246 @@
+{
+  "name": "docs-explorer",
+  "displayName": "Docs Explorer",
+  "description": "A reading-focused panel for your project's markdown docs (CLAUDE.md, specs, ADRs). Filters the file tree to markdown and opens files in preview.",
+  "version": "0.1.0",
+  "publisher": "jsprpalm",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.90.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "markdown",
+    "docs",
+    "documentation",
+    "preview",
+    "claude"
+  ],
+  "activationEvents": [
+    "onView:docsExplorerActivity",
+    "onView:docsExplorerExplorer"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "docsExplorer",
+          "title": "Docs Explorer",
+          "icon": "resources/docs-explorer.svg"
+        }
+      ]
+    },
+    "views": {
+      "docsExplorer": [
+        {
+          "id": "docsExplorerActivity",
+          "name": "Docs",
+          "when": "config.docsExplorer.viewLocation == 'activityBar'"
+        }
+      ],
+      "explorer": [
+        {
+          "id": "docsExplorerExplorer",
+          "name": "Docs Explorer",
+          "when": "config.docsExplorer.viewLocation == 'explorer'"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "docsExplorer.refresh",
+        "title": "Refresh",
+        "category": "Docs Explorer",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "docsExplorer.viewAsFlat",
+        "title": "Show as Flat List",
+        "category": "Docs Explorer",
+        "icon": "$(list-flat)"
+      },
+      {
+        "command": "docsExplorer.viewAsTree",
+        "title": "Show as Tree",
+        "category": "Docs Explorer",
+        "icon": "$(list-tree)"
+      },
+      {
+        "command": "docsExplorer.openInEditor",
+        "title": "Open in Editor",
+        "category": "Docs Explorer"
+      },
+      {
+        "command": "docsExplorer.openPreviewFull",
+        "title": "Open Preview in Full Editor",
+        "category": "Docs Explorer"
+      },
+      {
+        "command": "docsExplorer.revealInExplorer",
+        "title": "Reveal in Explorer",
+        "category": "Docs Explorer"
+      },
+      {
+        "command": "docsExplorer.copyRelativePath",
+        "title": "Copy Relative Path",
+        "category": "Docs Explorer"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "docsExplorer.openInEditor",
+          "when": "false"
+        },
+        {
+          "command": "docsExplorer.openPreviewFull",
+          "when": "false"
+        },
+        {
+          "command": "docsExplorer.revealInExplorer",
+          "when": "false"
+        },
+        {
+          "command": "docsExplorer.copyRelativePath",
+          "when": "false"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "docsExplorer.viewAsFlat",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && !docsExplorer.flat",
+          "group": "navigation@1"
+        },
+        {
+          "command": "docsExplorer.viewAsTree",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && docsExplorer.flat",
+          "group": "navigation@1"
+        },
+        {
+          "command": "docsExplorer.refresh",
+          "when": "view == docsExplorerActivity || view == docsExplorerExplorer",
+          "group": "navigation@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "docsExplorer.openInEditor",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && viewItem == file",
+          "group": "1_open@1"
+        },
+        {
+          "command": "docsExplorer.openPreviewFull",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && viewItem == file",
+          "group": "1_open@2"
+        },
+        {
+          "command": "docsExplorer.revealInExplorer",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && viewItem == file",
+          "group": "2_reveal@1"
+        },
+        {
+          "command": "docsExplorer.copyRelativePath",
+          "when": "(view == docsExplorerActivity || view == docsExplorerExplorer) && viewItem == file",
+          "group": "2_reveal@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Docs Explorer",
+      "properties": {
+        "docsExplorer.include": {
+          "type": "string",
+          "default": "**/*.{md,mdx,markdown}",
+          "markdownDescription": "Glob for which files are included. Can be extended, e.g. to include `.txt` (`**/*.{md,mdx,markdown,txt}`) — non-markdown files then open in the editor since preview is unavailable."
+        },
+        "docsExplorer.exclude": {
+          "type": "string",
+          "default": "**/node_modules/**",
+          "markdownDescription": "Extra exclude glob (in addition to `.gitignore`, `files.exclude` and `search.exclude`)."
+        },
+        "docsExplorer.respectGitignore": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Filter out git-ignored files using the workspace root `.gitignore`."
+        },
+        "docsExplorer.pinnedPatterns": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "**/CLAUDE.md",
+            "README.md",
+            "AGENTS.md",
+            ".claude/**"
+          ],
+          "markdownDescription": "Globs for files pinned to the top of the panel."
+        },
+        "docsExplorer.defaultOpenMode": {
+          "type": "string",
+          "enum": [
+            "previewToSide",
+            "preview",
+            "edit"
+          ],
+          "default": "previewToSide",
+          "markdownEnumDescriptions": [
+            "Open markdown preview beside the tree.",
+            "Open markdown preview taking the full editor.",
+            "Open the file in a normal editor (edit mode)."
+          ],
+          "markdownDescription": "How a file opens on single-click."
+        },
+        "docsExplorer.compactFolders": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "Compress single-child directory chains into `a/b/c` nodes (like VS Code's \"compact folders\")."
+        },
+        "docsExplorer.viewLocation": {
+          "type": "string",
+          "enum": [
+            "activityBar",
+            "explorer"
+          ],
+          "default": "activityBar",
+          "markdownEnumDescriptions": [
+            "Show as a dedicated icon in the Activity Bar.",
+            "Show as a section inside the Explorer side panel."
+          ],
+          "markdownDescription": "Where the Docs Explorer panel lives."
+        },
+        "docsExplorer.openInNewTab": {
+          "type": "boolean",
+          "default": false,
+          "markdownDescription": "Open each file in a new tab instead of reusing the same preview tab."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "vscode:prepublish": "node esbuild.mjs --production",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src test",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "ignore": "^5.3.1",
+    "minimatch": "^9.0.4"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.90.0",
+    "@vscode/vsce": "^2.31.0",
+    "esbuild": "^0.23.0",
+    "eslint": "^9.9.0",
+    "typescript": "^5.5.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^2.0.0"
+  }
+}
