@@ -12,5 +12,4 @@ eslint.config.mjs
 .gitignore
 .github/**
 CONTRIBUTING.md
-docs-explorer-spec.md
 *.vsix
